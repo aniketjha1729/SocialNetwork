@@ -17,7 +17,7 @@ const posts=require("./routes/api/posts");
 //   }
 // );
 //offline
-mongoose.connect(process.env.mongoDb, { useUnifiedTopology: true, useNewUrlParser: true }, () => {
+mongoose.connect("mongodb://localhost/socialNetwork", { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify:false}, () => {
     console.log('Connected');
 })
 
@@ -30,9 +30,9 @@ require('./config/passport')(passport);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use("/api",users);
-app.use("/api",profile);
-app.use("/api",posts);
+app.use('/api/users', users);
+app.use('/api/profile', profile);
+app.use('/api/posts', posts);
 
 
 

@@ -10,14 +10,13 @@ const passport = require('passport');
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
 
-router.get(
-  '/current',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
+router.get('/current',passport.authenticate('jwt', { session: false }),(req, res) => {
+  const {id,name,email,avatar}=req.user
     res.json({
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email
+      id: id,
+      name: name,
+      email: email,
+      avatar:avatar
     });
   }
 );
