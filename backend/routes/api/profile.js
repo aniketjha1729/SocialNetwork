@@ -8,9 +8,7 @@ const validateProfileInput = require('../../validation/profile');
 const validateExperienceInput = require('../../validation/experience');
 const validateEducationInput = require('../../validation/education');
 
-// Load Profile Model
 const Profile = require('../../models/Profiles');
-// Load User Model
 const User = require('../../models/Users');
 
 // @route   GET api/profile/test
@@ -18,8 +16,6 @@ const User = require('../../models/Users');
 // @access  Public
 router.get('/test', passport.authenticate('jwt', { session: false }),(req, res) =>
  res.json({ msg: 'Profile Works' }));
-
-
 
 
 
@@ -103,8 +99,6 @@ router.get('/user/:user_id', (req, res) => {
       res.status(404).json({ profile: 'There is no profile for this user' })
     );
 });
-
-
 
 
 
@@ -296,6 +290,7 @@ router.delete('/education/:edu_id',passport.authenticate('jwt', { session: false
       .catch(err => res.status(404).json(err));
   }
 );
+
 
 
 
