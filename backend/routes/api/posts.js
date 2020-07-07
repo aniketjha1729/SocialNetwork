@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
 });
 
 // @route   GET api/posts/:id
-// @desc    Get post by id
+// @desc    Get post by Postid
 // @access  Public
 router.get('/:id', (req, res) => {
     Post.findById(req.params.id)
@@ -37,13 +37,27 @@ router.get('/:id', (req, res) => {
         );
 });
 
+// @route   GET api/posts/:id
+// @desc    Get post by Userid
+// @access  Public
+router.get('/allpost/:id',(req,res)=>{
+    Post.find({user:req.params.id}).then(allPost=>{
+        if(allPost){
+            res.json(allPost)
+        }else{
+            res.status(404).json({noPost:"No Post Form User"})
+        }
+    }).catch(err=>{
+        res.status(400).json({err:"Something Went Wrong"})
+    })
+})
+
+
+
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private
-router.post(
-    '/',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
+router.post('/',passport.authenticate('jwt', { session: false }),(req, res) => {
         const { errors, isValid } = validatePostInput(req.body);
 
         // Check Validation
@@ -66,10 +80,7 @@ router.post(
 // @route   DELETE api/posts/:id
 // @desc    Delete post
 // @access  Private
-router.delete(
-    '/:id',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
+router.delete('/:id',passport.authenticate('jwt', { session: false }),(req, res) => {
         Profile.findOne({ user: req.user.id }).then(profile => {
             Post.findById(req.params.id)
                 .then(post => {
@@ -91,10 +102,7 @@ router.delete(
 // @route   POST api/posts/like/:id
 // @desc    Like post
 // @access  Private
-router.post(
-    '/like/:id',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
+router.post('/like/:id',passport.authenticate('jwt', { session: false }),(req, res) => {
         Profile.findOne({ user: req.user.id }).then(profile => {
             Post.findById(req.params.id)
                 .then(post => {
@@ -120,10 +128,7 @@ router.post(
 // @route   POST api/posts/unlike/:id
 // @desc    Unlike post
 // @access  Private
-router.post(
-    '/unlike/:id',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
+router.post('/unlike/:id',passport.authenticate('jwt', { session: false }),(req, res) => {
         Profile.findOne({ user: req.user.id }).then(profile => {
             Post.findById(req.params.id)
                 .then(post => {
@@ -155,10 +160,7 @@ router.post(
 // @route   POST api/posts/comment/:id
 // @desc    Add comment to post
 // @access  Private
-router.post(
-    '/comment/:id',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
+router.post('/comment/:id',passport.authenticate('jwt', { session: false }),(req, res) => {
         const { errors, isValid } = validatePostInput(req.body);
 
         // Check Validation
@@ -189,10 +191,7 @@ router.post(
 // @route   DELETE api/posts/comment/:id/:comment_id
 // @desc    Remove comment from post
 // @access  Private
-router.delete(
-    '/comment/:id/:comment_id',
-    passport.authenticate('jwt', { session: false }),
-    (req, res) => {
+router.delete('/comment/:id/:comment_id',passport.authenticate('jwt', { session: false }),(req, res) => {
         Post.findById(req.params.id)
             .then(post => {
                 // Check to see if comment exists
@@ -205,16 +204,19 @@ router.delete(
                         .status(404)
                         .json({ commentnotexists: 'Comment does not exist' });
                 }
+                //Deleting Commets only if same user has requested:
+                post.comments.map(myitem=>{
+                    if (myitem.user.toString() === req.user.id && myitem._id.toString() === req.params.comment_id){
+                        const removeIndex = post.comments
+                            .map(item => item._id.toString())
+                            .indexOf(req.params.comment_id);
 
-                // Get remove index
-                const removeIndex = post.comments
-                    .map(item => item._id.toString())
-                    .indexOf(req.params.comment_id);
-
-                // Splice comment out of array
-                post.comments.splice(removeIndex, 1);
-
-                post.save().then(post => res.json(post));
+                        // Splice comment out of array
+                        post.comments.splice(removeIndex, 1);
+                           
+                    }
+                    post.save().then(post => res.json(post)); 
+                })   
             })
             .catch(err => res.status(404).json({ postnotfound: 'No post found' }));
     }
