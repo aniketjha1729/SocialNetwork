@@ -12,14 +12,14 @@ const profile=require("./routes/api/profile");
 const posts=require("./routes/api/posts");
 
 //online
-// mongoose.connect(process.env.mongoURI,{ useUnifiedTopology: true, useNewUrlParser: true },() => {
-//     console.log("Database Connected");
-//   }
-// );
+mongoose.connect("mongodb+srv://aniket1729:aniketjha@cluster0-ok85m.mongodb.net/socialnetwork?retryWrites=true&w=majority",{ useUnifiedTopology: true, useNewUrlParser: true },() => {
+    console.log("Database Connected");
+  }
+);
 //offline
-mongoose.connect("mongodb://localhost/socialNetwork", { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify:false}, () => {
-    console.log('Connected');
-})
+// mongoose.connect("mongodb://localhost/socialNetwork", { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify:false}, () => {
+//     console.log('Connected');
+// })
 
 // Passport middleware
 app.use(passport.initialize());
