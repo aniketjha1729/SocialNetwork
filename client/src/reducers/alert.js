@@ -1,6 +1,7 @@
-import { SET_ALERT, REMOVE_ALERT } from "../actions/types";
+import { SET_ALERT, REMOVE_ALERT } from '../actions/types';
 
 const initialState = [];
+
 function alertReducer(state = initialState, action) {
   const { type, payload } = action;
 
